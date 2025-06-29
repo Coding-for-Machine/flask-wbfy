@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Terminal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { background: #000; color: #fff; }
+    #terminal { height: 90vh; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+
+  <script>
+    const socket = io();
+    const term = new Terminal();
+    term.open(document.getElementById('terminal'));
+    term.focus();
+
+    // Terminaldan yozilganlarni serverga yuboramiz
+    term.onData(data => {
+      socket.emit('terminal_input', data);
+    });
+
+    // Serverdan kelgan chiqishni terminalda ko‘rsatamiz
+    socket.on('terminal_output', data => {
+      term.write(data);
+    });
+  </script>
+</body>
+</html>
